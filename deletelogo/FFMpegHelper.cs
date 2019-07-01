@@ -13,12 +13,12 @@ namespace WindowsFormsApp1
         readonly static string probe = $"{AppDomain.CurrentDomain.BaseDirectory}/ffmpeg/ffprobe.exe";
 
         public static void Screenshot(string old,string img) {
-            string arg = $"-i {old} -y -f image2 -ss 1 {img}";
+            string arg = $"-i \"{old}\" -y -f image2 -ss 1 \"{img}\"";
             run(mpeg, arg);
 
         }
         public static void DeleteLogo(string old, string save, int x, int y, int w, int h, DataReceivedEventHandler output = null, DataReceivedEventHandler error = null, EventHandler exit = null) {
-            string arg = $" -i {old} -filter_complex \"delogo=x={x}:y={y}:w={w}:h={h}:show=0\" {save}";
+            string arg = $" -i \"{old}\" -filter_complex \"delogo=x={x}:y={y}:w={w}:h={h}:show=0\" \"{save}\"";
             run(mpeg, arg, true, output, error, exit);
         }
 

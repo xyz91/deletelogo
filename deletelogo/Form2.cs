@@ -62,47 +62,52 @@ namespace WindowsFormsApp1
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
-            SaveFileDialog saveFile = new SaveFileDialog() {
-                Filter = "mp4|*.mp4"
-            };
-            var j = new DataReceivedEventHandler((a, b) => {
-                if (b.Data == null)
+            if (this.Point != null && this.Point.Height >0 && this.Point.Width >0)
+            {
+                SaveFileDialog saveFile = new SaveFileDialog()
                 {
-                    return;
-                }
-                if (b.Data.Trim().StartsWith("Duration:"))
+                    Filter = "mp4|*.mp4"
+                };
+                var j = new DataReceivedEventHandler((a, b) =>
                 {
-                    Regex rr = new Regex("(?<=Duration: ).+(?=, start)");
-                    var mm = rr.Match(b.Data);
-                    if (mm.Success)
+                    if (b.Data == null)
                     {
-                        SetPM((DateTime.Parse("0001-1-1 " + mm.Value) - new DateTime()).TotalSeconds);
+                        return;
                     }
-                }
-                else if (b.Data.Trim().StartsWith("frame="))
-                {
-                    Regex rr = new Regex("(?<=time=).+(?= bitrate=)");
-                    var mm = rr.Match(b.Data);
-                    if (mm.Success)
+                    if (b.Data.Trim().StartsWith("Duration:"))
                     {
-                        SetPV((DateTime.Parse("0001-1-1 " + mm.Value) - new DateTime()).TotalSeconds);
+                        Regex rr = new Regex("(?<=Duration: ).+(?=, start)");
+                        var mm = rr.Match(b.Data);
+                        if (mm.Success)
+                        {
+                            SetPM((DateTime.Parse("0001-1-1 " + mm.Value) - new DateTime()).TotalSeconds);
+                        }
                     }
-                }
-                else if(b.Data.Trim().StartsWith("[aac @") && !this.form1.button1.Enabled && b.Data.Contains("Qavg:"))
+                    else if (b.Data.Trim().StartsWith("frame="))
+                    {
+                        Regex rr = new Regex("(?<=time=).+(?= bitrate=)");
+                        var mm = rr.Match(b.Data);
+                        if (mm.Success)
+                        {
+                            SetPV((DateTime.Parse("0001-1-1 " + mm.Value) - new DateTime()).TotalSeconds);
+                        }
+                    }
+                    else if (b.Data.Trim().StartsWith("[aac @") && !this.form1.button1.Enabled && b.Data.Contains("Qavg:"))
+                    {
+                        SetPV(this.form1.progressBar1.Maximum);
+                        BtnEnabled();
+                    }
+                });
+                if (saveFile.ShowDialog() == DialogResult.OK)
                 {
-                    SetPV(this.form1.progressBar1.Maximum);
-                    BtnEnabled();
-                }
-            })   ;
-            if (saveFile.ShowDialog() == DialogResult.OK && this.Point != null) {
 
-                this.form1.button1.Enabled = false;
-                FFMpegHelper.DeleteLogo(this.form1.Video, saveFile.FileName, this.Point.StartX, this.Point.StartY, this.Point.Width, this.Point.Height
-                    , j
-                    , j);
-                
+                    this.form1.button1.Enabled = false;
+                    FFMpegHelper.DeleteLogo(this.form1.Video, saveFile.FileName, this.Point.StartX, this.Point.StartY, this.Point.Width, this.Point.Height
+                        , j
+                        , j);
+
+                }
             }
-            
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)

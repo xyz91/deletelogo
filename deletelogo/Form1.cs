@@ -29,7 +29,10 @@ namespace WindowsFormsApp1
             {
                 var file = open.FileName;
                 this.Video = open.FileName;
-                System.IO.File.Delete("1.jpg");
+                if (System.IO.File.Exists("1.jpg"))
+                {
+                    System.IO.File.Delete("1.jpg");
+                }                
                 FFMpegHelper.Screenshot(file, "1.jpg");
 
                 Form2 form2 = new Form2(this, "1.jpg");
